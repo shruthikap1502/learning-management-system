@@ -1,267 +1,333 @@
 import { useEffect, useState } from "react";
-import MainLayout from "../../components/layout/MainLayout";
-import courses from "../../data/courses";
+import { Link } from "react-router-dom";
 
-function Profile() {
+const courses = [
+  {
+    id: 1,
+    title: "Python",
+    icon: "🐍",
+  },
+  {
+    id: 2,
+    title: "Java",
+    icon: "☕",
+  },
+  {
+    id: 3,
+    title: "JavaScript",
+    icon: "🟨",
+  },
+  {
+    id: 4,
+    title: "React",
+    icon: "⚛️",
+  },
+  {
+    id: 5,
+    title: "Node.js",
+    icon: "🟢",
+  },
+  {
+    id: 6,
+    title: "MongoDB",
+    icon: "🍃",
+  },
+];
+
+export default function Profile() {
   const [completedLessons, setCompletedLessons] = useState(0);
 
-  // Calculate completed lessons from all courses
+  const totalLessons = 30;
+
   useEffect(() => {
-    let totalCompleted = 0;
+    let total = 0;
 
-    for (let i = 1; i <= courses.length; i++) {
-      const saved = JSON.parse(
-        localStorage.getItem(`course-${i}`) || "[]"
-      );
+    courses.forEach((course) => {
+      const saved = localStorage.getItem(`course-${course.id}`);
 
-      totalCompleted += saved.length;
-    }
+      if (saved) {
+        try {
+          const lessons = JSON.parse(saved);
 
-    setCompletedLessons(totalCompleted);
+          if (Array.isArray(lessons)) {
+            total += lessons.length;
+          }
+        } catch {
+          console.log("Unable to read course progress");
+        }
+      }
+    });
+
+    setCompletedLessons(total);
   }, []);
 
-  // Your courses have 6 lessons each
-  const totalLessons = courses.length * 6;
-
-  const progress =
-    totalLessons > 0
-      ? Math.round((completedLessons / totalLessons) * 100)
-      : 0;
+  const progress = Math.min(
+    100,
+    Math.round((completedLessons / totalLessons) * 100)
+  );
 
   return (
-    <MainLayout>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50">
 
-      {/* PAGE HEADER */}
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
-      <div className="mb-8">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="text-3xl">🎓</div>
 
-        <h1 className="text-4xl font-bold text-slate-900">
-          My Profile 👤
-        </h1>
+            <div>
+              <h1 className="text-xl font-bold text-violet-600">
+                Code & Learn
+              </h1>
 
-        <p className="text-slate-500 mt-2">
-          View your learning progress and course activity.
-        </p>
+              <p className="text-xs text-gray-500">
+                Learning Management System
+              </p>
+            </div>
+          </Link>
 
-      </div>
+          <div className="flex items-center gap-3">
 
+            <Link
+              to="/courses"
+              className="hidden rounded-xl px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-violet-50 hover:text-violet-600 sm:block"
+            >
+              Courses
+            </Link>
 
-      {/* PROFILE CARD */}
+            <Link
+              to="/dashboard"
+              className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-violet-200 transition hover:-translate-y-0.5 hover:bg-violet-700"
+            >
+              Dashboard
+            </Link>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-
-        <div className="flex flex-col md:flex-row items-center gap-6">
-
-          {/* PROFILE ICON */}
-
-          <div className="w-28 h-28 rounded-full bg-violet-100 flex items-center justify-center text-6xl">
-            👩‍💻
           </div>
+        </div>
+      </header>
 
 
-          {/* STUDENT INFORMATION */}
+      {/* MAIN */}
+      <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
 
-          <div className="text-center md:text-left">
+        {/* PAGE TITLE */}
+        <div className="mb-8">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-violet-600">
+            Student Account
+          </p>
 
-            <h2 className="text-3xl font-bold text-slate-900">
-              Student
-            </h2>
+          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+            My Profile
+          </h2>
 
-            <p className="text-slate-500 mt-1">
-              BSc.IT Student
+          <p className="mt-2 max-w-xl text-gray-500">
+            Manage your learning profile and keep track of your progress.
+          </p>
+        </div>
+
+
+        {/* PROFILE HERO */}
+        <section className="relative mb-6 overflow-hidden rounded-3xl border border-violet-100 bg-white p-6 shadow-sm sm:p-8">
+
+          {/* Decorative background */}
+          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-violet-100 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-blue-100 blur-3xl" />
+
+          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+
+            {/* AVATAR */}
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-600 to-blue-500 text-4xl font-bold text-white shadow-lg shadow-violet-200">
+              S
+            </div>
+
+            {/* INFO */}
+            <div className="flex-1">
+
+              <p className="mb-1 text-sm font-medium text-violet-600">
+                Welcome back 👋
+              </p>
+
+              <h3 className="text-2xl font-bold text-slate-900">
+                Student
+              </h3>
+
+              <p className="mt-1 text-gray-500">
+                Programming Learner
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+
+                <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-600">
+                  🎓 Student
+                </span>
+
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                  💻 Developer in progress
+                </span>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        {/* STATS */}
+        <section className="mb-6 grid gap-4 sm:grid-cols-3">
+
+          <div className="card-hover rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-xl">
+              📚
+            </div>
+
+            <p className="text-sm font-medium text-gray-500">
+              Courses
             </p>
 
-            <p className="text-slate-400 text-sm mt-2">
-              Learning Management System
+            <p className="mt-1 text-3xl font-bold text-slate-900">
+              6
+            </p>
+          </div>
+
+
+          <div className="card-hover rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl">
+              ✅
+            </div>
+
+            <p className="text-sm font-medium text-gray-500">
+              Lessons completed
             </p>
 
+            <p className="mt-1 text-3xl font-bold text-slate-900">
+              {completedLessons}
+            </p>
           </div>
 
-        </div>
 
-      </div>
+          <div className="card-hover rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl">
+              🚀
+            </div>
 
+            <p className="text-sm font-medium text-gray-500">
+              Overall progress
+            </p>
 
-      {/* LEARNING STATISTICS */}
-
-      <div className="grid md:grid-cols-3 gap-6 mt-8">
-
-        {/* COURSES */}
-
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-
-          <div className="text-3xl">
-            📚
+            <p className="mt-1 text-3xl font-bold text-slate-900">
+              {progress}%
+            </p>
           </div>
 
-          <p className="text-slate-500 mt-4">
-            Total Courses
-          </p>
-
-          <p className="text-4xl font-bold text-violet-600 mt-2">
-            {courses.length}
-          </p>
-
-        </div>
-
-
-        {/* COMPLETED */}
-
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-
-          <div className="text-3xl">
-            ✅
-          </div>
-
-          <p className="text-slate-500 mt-4">
-            Completed Lessons
-          </p>
-
-          <p className="text-4xl font-bold text-green-500 mt-2">
-            {completedLessons}
-          </p>
-
-        </div>
+        </section>
 
 
         {/* PROGRESS */}
+        <section className="mb-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
 
-          <div className="text-3xl">
-            📊
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">
+                Learning progress
+              </h3>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Keep going — you're building your skills!
+              </p>
+            </div>
+
+            <span className="rounded-full bg-violet-50 px-3 py-1 text-sm font-bold text-violet-600">
+              {progress}%
+            </span>
+
           </div>
 
-          <p className="text-slate-500 mt-4">
-            Overall Progress
-          </p>
 
-          <p className="text-4xl font-bold text-yellow-500 mt-2">
-            {progress}%
-          </p>
+          <div className="h-3 overflow-hidden rounded-full bg-gray-100">
 
-        </div>
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-violet-600 to-blue-500 transition-all duration-700"
+              style={{ width: `${progress}%` }}
+            />
 
-      </div>
+          </div>
+
+          <div className="mt-3 flex justify-between text-xs text-gray-400">
+            <span>{completedLessons} lessons completed</span>
+            <span>{totalLessons} total lessons</span>
+          </div>
+
+        </section>
 
 
-      {/* OVERALL PROGRESS */}
+        {/* COURSES */}
+        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mt-8">
+          <div className="mb-6">
 
-        <div className="flex justify-between items-center mb-4">
-
-          <div>
-
-            <h2 className="text-2xl font-bold text-slate-900">
-              Learning Progress
-            </h2>
-
-            <p className="text-slate-500 mt-1">
-              Keep learning and complete your lessons! 🚀
+            <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+              Your learning path
             </p>
 
+            <h3 className="mt-1 text-2xl font-bold text-slate-900">
+              Enrolled courses
+            </h3>
+
           </div>
 
-          <span className="text-2xl font-bold text-violet-600">
-            {progress}%
-          </span>
 
-        </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
+            {courses.map((course) => (
 
-        {/* PROGRESS BAR */}
-
-        <div className="w-full bg-slate-200 rounded-full h-5 overflow-hidden">
-
-          <div
-            className="bg-violet-600 h-5 rounded-full transition-all duration-700"
-            style={{
-              width: `${progress}%`,
-            }}
-          ></div>
-
-        </div>
-
-
-        <p className="text-slate-500 mt-4">
-          {completedLessons} of {totalLessons} lessons completed
-        </p>
-
-      </div>
-
-
-      {/* COURSE PROGRESS */}
-
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mt-8">
-
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">
-          Course Progress 📚
-        </h2>
-
-        <div className="space-y-5">
-
-          {courses.map((course) => {
-
-            const saved = JSON.parse(
-              localStorage.getItem(`course-${course.id}`) || "[]"
-            );
-
-            const completed = saved.length;
-
-            const courseTotal = 6;
-
-            const courseProgress = Math.min(
-              Math.round((completed / courseTotal) * 100),
-              100
-            );
-
-            return (
-              <div
+              <Link
                 key={course.id}
-                className="border border-slate-200 rounded-2xl p-5"
+                to={`/courses/${course.id}`}
+                className="card-hover group rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-5"
               >
 
-                <div className="flex justify-between items-center mb-3">
+                <div className="mb-4 flex items-center justify-between">
 
-                  <h3 className="font-semibold text-slate-900">
-                    {course.title}
-                  </h3>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 text-2xl">
+                    {course.icon}
+                  </div>
 
-                  <span className="text-sm font-semibold text-violet-600">
-                    {courseProgress}%
+                  <span className="text-gray-300 transition group-hover:translate-x-1 group-hover:text-violet-500">
+                    →
                   </span>
 
                 </div>
 
+                <h4 className="text-lg font-bold text-slate-900">
+                  {course.title}
+                </h4>
 
-                <div className="w-full bg-slate-200 rounded-full h-3">
-
-                  <div
-                    className="bg-violet-500 h-3 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${courseProgress}%`,
-                    }}
-                  ></div>
-
-                </div>
-
-
-                <p className="text-sm text-slate-500 mt-2">
-                  {completed} of {courseTotal} lessons completed
+                <p className="mt-1 text-sm text-gray-500">
+                  Programming course
                 </p>
 
-              </div>
-            );
+              </Link>
 
-          })}
+            ))}
+
+          </div>
+
+        </section>
+
+
+        {/* FOOTER */}
+        <div className="py-8 text-center">
+
+          <p className="text-sm text-gray-400">
+            Keep learning. Keep building. Keep growing. ✨
+          </p>
 
         </div>
 
-      </div>
+      </main>
 
-    </MainLayout>
+    </div>
   );
 }
-
-export default Profile;
